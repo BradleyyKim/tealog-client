@@ -4,6 +4,8 @@ import { useDarkMode } from '@/hooks/useDarkMode';
 import { useBrewLogs } from '@/hooks/useBrewLogs';
 import { useTeaLeaves } from '@/hooks/useTeaLeaves';
 import { useTeawares } from '@/hooks/useTeaware';
+import { motion } from 'framer-motion';
+import { pageTransition, pageTransitionProps, staggerContainer, staggerItem } from '@/lib/animations';
 
 export default function ProfilePage() {
   const { user, logout } = useAuth();
@@ -14,46 +16,70 @@ export default function ProfilePage() {
   const { data: teawares } = useTeawares();
 
   return (
-    <div className="px-6 pt-12 pb-8">
+    <motion.div
+      className="px-6 pt-12 pb-8"
+      variants={pageTransition}
+      initial="initial"
+      animate="animate"
+      transition={pageTransitionProps}
+    >
       {/* Profile Header */}
-      <div className="flex items-center gap-4 mb-8">
-        <div className="w-16 h-16 rounded-full bg-primary/20 flex items-center justify-center">
+      <motion.div
+        className="flex items-center gap-4 mb-8"
+        variants={staggerContainer}
+        initial="initial"
+        animate="animate"
+      >
+        <motion.div
+          variants={staggerItem}
+          className="w-16 h-16 rounded-full bg-primary/20 flex items-center justify-center"
+        >
           <span className="material-icons text-primary text-3xl">person</span>
-        </div>
-        <div>
+        </motion.div>
+        <motion.div variants={staggerItem}>
           <h1 className="text-2xl font-bold text-neutral-dark dark:text-white">
             {user?.username}
           </h1>
           <p className="text-sm text-text-muted">{user?.email}</p>
-        </div>
-      </div>
+        </motion.div>
+      </motion.div>
 
       {/* Stats */}
-      <div className="grid grid-cols-3 gap-4 mb-8">
-        <div className="text-center p-4 bg-white dark:bg-neutral-dark/40 rounded-xl border border-neutral-light dark:border-neutral-dark/50">
+      <motion.div
+        className="grid grid-cols-3 gap-4 mb-8"
+        variants={staggerContainer}
+        initial="initial"
+        animate="animate"
+      >
+        <motion.div variants={staggerItem} className="text-center p-4 bg-white dark:bg-neutral-dark/40 rounded-xl border border-neutral-light dark:border-neutral-dark/50">
           <span className="text-2xl font-bold text-neutral-dark dark:text-white block">
             {brewLogs?.length || 0}
           </span>
           <span className="text-xs text-text-muted font-medium">{t('profile.brews')}</span>
-        </div>
-        <div className="text-center p-4 bg-white dark:bg-neutral-dark/40 rounded-xl border border-neutral-light dark:border-neutral-dark/50">
+        </motion.div>
+        <motion.div variants={staggerItem} className="text-center p-4 bg-white dark:bg-neutral-dark/40 rounded-xl border border-neutral-light dark:border-neutral-dark/50">
           <span className="text-2xl font-bold text-neutral-dark dark:text-white block">
             {teas?.length || 0}
           </span>
           <span className="text-xs text-text-muted font-medium">{t('profile.teas')}</span>
-        </div>
-        <div className="text-center p-4 bg-white dark:bg-neutral-dark/40 rounded-xl border border-neutral-light dark:border-neutral-dark/50">
+        </motion.div>
+        <motion.div variants={staggerItem} className="text-center p-4 bg-white dark:bg-neutral-dark/40 rounded-xl border border-neutral-light dark:border-neutral-dark/50">
           <span className="text-2xl font-bold text-neutral-dark dark:text-white block">
             {teawares?.length || 0}
           </span>
           <span className="text-xs text-text-muted font-medium">{t('profile.teaware')}</span>
-        </div>
-      </div>
+        </motion.div>
+      </motion.div>
 
       {/* Settings */}
-      <div className="space-y-3">
+      <motion.div
+        className="space-y-3"
+        variants={staggerContainer}
+        initial="initial"
+        animate="animate"
+      >
         {/* Dark Mode */}
-        <div className="bg-white dark:bg-neutral-dark/40 rounded-xl border border-neutral-light dark:border-neutral-dark/50 p-4 flex items-center justify-between">
+        <motion.div variants={staggerItem} className="bg-white dark:bg-neutral-dark/40 rounded-xl border border-neutral-light dark:border-neutral-dark/50 p-4 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <span className="material-icons-outlined text-text-muted">dark_mode</span>
             <span className="text-sm font-medium text-neutral-dark dark:text-white">{t('profile.darkMode')}</span>
@@ -70,10 +96,10 @@ export default function ProfilePage() {
               }`}
             />
           </button>
-        </div>
+        </motion.div>
 
         {/* Language */}
-        <div className="bg-white dark:bg-neutral-dark/40 rounded-xl border border-neutral-light dark:border-neutral-dark/50 p-4 flex items-center justify-between">
+        <motion.div variants={staggerItem} className="bg-white dark:bg-neutral-dark/40 rounded-xl border border-neutral-light dark:border-neutral-dark/50 p-4 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <span className="material-icons-outlined text-text-muted">translate</span>
             <span className="text-sm font-medium text-neutral-dark dark:text-white">{t('profile.language')}</span>
@@ -100,17 +126,18 @@ export default function ProfilePage() {
               KO
             </button>
           </div>
-        </div>
+        </motion.div>
 
         {/* Sign Out */}
-        <button
+        <motion.button
+          variants={staggerItem}
           onClick={logout}
           className="w-full bg-white dark:bg-neutral-dark/40 rounded-xl border border-neutral-light dark:border-neutral-dark/50 p-4 flex items-center gap-3 text-red-500 hover:bg-red-50 dark:hover:bg-red-900/10 transition-colors"
         >
           <span className="material-icons-outlined">logout</span>
           <span className="text-sm font-medium">{t('profile.signOut')}</span>
-        </button>
-      </div>
-    </div>
+        </motion.button>
+      </motion.div>
+    </motion.div>
   );
 }

@@ -1,0 +1,13 @@
+{
+  "name": "ChaCha",
+  "short_name": "ChaCha",
+  "description": "천천히 차를 음미하며 차차 나아지다",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#f0e9df",
+  "theme_color": "#6b8e71",
+  "icons": [
+    { "src": "/icons/icon-192x192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "/icons/icon-512x512.png", "sizes": "512x512", "type": "image/png" }
+  ]
+}

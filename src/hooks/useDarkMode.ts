@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 
-const DARK_MODE_KEY = 'tealog_dark_mode';
+const DARK_MODE_KEY = 'chacha_dark_mode';
 
 export function useDarkMode() {
   const [isDark, setIsDark] = useState(() => {

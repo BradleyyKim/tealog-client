@@ -9,6 +9,8 @@ import LoadingSpinner from '@/components/ui/LoadingSpinner';
 import EmptyState from '@/components/ui/EmptyState';
 import { TEA_CATEGORIES } from '@/lib/constants';
 import type { TranslationKey } from '@/lib/i18n';
+import { motion } from 'framer-motion';
+import { pageTransition, pageTransitionProps, staggerContainer, staggerItem } from '@/lib/animations';
 
 export default function TeaCollectionPage() {
   const navigate = useNavigate();
@@ -38,7 +40,14 @@ export default function TeaCollectionPage() {
   }, [teas, search, category]);
 
   return (
-    <div className="flex flex-col min-h-full">
+    <motion.div
+      className="flex flex-col min-h-full"
+      variants={pageTransition}
+      initial="initial"
+      animate="animate"
+      exit="exit"
+      transition={pageTransitionProps}
+    >
       {/* Header */}
       <header className="sticky top-0 z-20 bg-surface-light/90 dark:bg-surface-dark/90 backdrop-blur-md border-b border-primary/10 px-6 pt-10 pb-4">
         <div className="flex justify-between items-center mb-6">
@@ -63,7 +72,7 @@ export default function TeaCollectionPage() {
       </header>
 
       {/* Content */}
-      <div className="flex-1 px-6 py-6 space-y-4">
+      <div className="flex-1 px-6 py-6">
         {isLoading && <LoadingSpinner />}
 
         {!isLoading && filtered.length === 0 && (
@@ -75,10 +84,19 @@ export default function TeaCollectionPage() {
           />
         )}
 
-        {filtered.map((tea) => (
-          <TeaCard key={tea.documentId} tea={tea} />
-        ))}
+        <motion.div
+          className="space-y-4"
+          variants={staggerContainer}
+          initial="initial"
+          animate="animate"
+        >
+          {filtered.map((tea) => (
+            <motion.div key={tea.documentId} variants={staggerItem}>
+              <TeaCard tea={tea} />
+            </motion.div>
+          ))}
+        </motion.div>
       </div>
-    </div>
+    </motion.div>
   );
 }

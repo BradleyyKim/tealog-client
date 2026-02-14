@@ -8,6 +8,8 @@ import LoadingSpinner from '@/components/ui/LoadingSpinner';
 import EmptyState from '@/components/ui/EmptyState';
 import { TEAWARE_TYPES } from '@/lib/constants';
 import type { TranslationKey } from '@/lib/i18n';
+import { motion } from 'framer-motion';
+import { pageTransition, pageTransitionProps, staggerContainer, staggerItem } from '@/lib/animations';
 
 export default function TeawareListPage() {
   const navigate = useNavigate();
@@ -30,7 +32,14 @@ export default function TeawareListPage() {
   }, [teawares, typeFilter]);
 
   return (
-    <div className="flex flex-col min-h-full">
+    <motion.div
+      className="flex flex-col min-h-full"
+      variants={pageTransition}
+      initial="initial"
+      animate="animate"
+      exit="exit"
+      transition={pageTransitionProps}
+    >
       {/* Header */}
       <header className="sticky top-0 z-20 bg-bg-light/90 dark:bg-bg-dark/90 backdrop-blur-md border-b border-primary/10 px-6 pt-10 pb-4">
         <div className="flex justify-between items-center mb-6">
@@ -60,12 +69,19 @@ export default function TeawareListPage() {
           />
         )}
 
-        <div className="grid grid-cols-2 gap-4">
+        <motion.div
+          className="grid grid-cols-2 gap-4"
+          variants={staggerContainer}
+          initial="initial"
+          animate="animate"
+        >
           {filtered.map((tw) => (
-            <TeawareCard key={tw.documentId} teaware={tw} />
+            <motion.div key={tw.documentId} variants={staggerItem}>
+              <TeawareCard teaware={tw} />
+            </motion.div>
           ))}
-        </div>
+        </motion.div>
       </div>
-    </div>
+    </motion.div>
   );
 }

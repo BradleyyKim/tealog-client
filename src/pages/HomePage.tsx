@@ -9,6 +9,9 @@ import BrewLogListItem from '@/components/domain/BrewLogListItem';
 import EmptyState from '@/components/ui/EmptyState';
 import { useNavigate } from 'react-router-dom';
 import { isThisWeek, differenceInCalendarDays, parseISO } from 'date-fns';
+import { motion } from 'framer-motion';
+import { fadeInUp, staggerContainer, staggerItem } from '@/lib/animations';
+
 function useGreeting() {
   const { t } = useI18n();
   const hour = new Date().getHours();
@@ -58,7 +61,12 @@ export default function HomePage() {
       <div className="absolute top-0 right-0 w-64 h-64 bg-primary/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 pointer-events-none" />
 
       {/* Header */}
-      <header className="pt-12 pb-4 px-6 flex justify-between items-center z-10 relative">
+      <motion.header
+        className="pt-12 pb-4 px-6 flex justify-between items-center z-10 relative"
+        variants={fadeInUp}
+        initial="initial"
+        animate="animate"
+      >
         <div>
           <div className="flex items-center gap-2 text-neutral-mid dark:text-gray-400 mb-1">
             <span className="material-icons-outlined text-xl text-primary">{greeting.icon}</span>
@@ -76,21 +84,31 @@ export default function HomePage() {
         >
           <span className="material-icons text-primary text-xl">person</span>
         </button>
-      </header>
+      </motion.header>
 
       <div className="z-10 relative">
         {/* Featured: Last Brewed */}
         {recentLogs.length > 0 && (
-          <section className="mt-4 pl-6">
+          <motion.section
+            className="mt-4 pl-6"
+            variants={staggerContainer}
+            initial="initial"
+            animate="animate"
+          >
             <div className="flex justify-between items-end pr-6 mb-4">
               <h2 className="text-lg font-bold text-neutral-dark dark:text-white">{t('home.lastBrewed')}</h2>
             </div>
             <div className="flex overflow-x-auto gap-4 pb-6 pr-6 no-scrollbar snap-x snap-mandatory">
               {recentLogs.map((log) => (
-                <BrewLogHeroCard key={log.documentId} log={log} />
+                <motion.div key={log.documentId} variants={staggerItem}>
+                  <BrewLogHeroCard log={log} />
+                </motion.div>
               ))}
               {/* Suggestion card */}
-              <div className="min-w-[85%] snap-center relative aspect-[4/5] rounded-xl overflow-hidden border border-neutral-light dark:border-neutral-dark">
+              <motion.div
+                variants={staggerItem}
+                className="min-w-[85%] snap-center relative aspect-[4/5] rounded-xl overflow-hidden border border-neutral-light dark:border-neutral-dark"
+              >
                 <div className="absolute inset-0 bg-bg-light/80 dark:bg-bg-dark/80 backdrop-blur-sm flex flex-col justify-center items-center text-center p-6">
                   <div className="w-16 h-16 rounded-full bg-primary/20 flex items-center justify-center mb-4 text-primary">
                     <span className="material-icons text-3xl">eco</span>
@@ -108,9 +126,9 @@ export default function HomePage() {
                     {t('home.exploreCollection')}
                   </button>
                 </div>
-              </div>
+              </motion.div>
             </div>
-          </section>
+          </motion.section>
         )}
 
         {logs.length === 0 && (
@@ -125,34 +143,50 @@ export default function HomePage() {
         )}
 
         {/* Stats */}
-        <section className="px-6 mt-2 mb-8">
+        <motion.section
+          className="px-6 mt-2 mb-8"
+          variants={staggerContainer}
+          initial="initial"
+          animate="animate"
+        >
           <h2 className="text-lg font-bold text-neutral-dark dark:text-white mb-4">{t('home.yourTeaJourney')}</h2>
           <div className="grid grid-cols-2 gap-4">
-            <StatCard
-              icon="local_fire_department"
-              value={streak}
-              label={t('home.dayStreak') as string}
-              iconBgClass="bg-orange-100 dark:bg-orange-900/30"
-              iconTextClass="text-orange-600 dark:text-orange-400"
-            />
-            <StatCard
-              icon="emoji_food_beverage"
-              value={teasCount}
-              label={t('home.teasOwned') as string}
-            />
+            <motion.div variants={staggerItem}>
+              <StatCard
+                icon="local_fire_department"
+                value={streak}
+                label={t('home.dayStreak') as string}
+                iconBgClass="bg-orange-100 dark:bg-orange-900/30"
+                iconTextClass="text-orange-600 dark:text-orange-400"
+              />
+            </motion.div>
+            <motion.div variants={staggerItem}>
+              <StatCard
+                icon="emoji_food_beverage"
+                value={teasCount}
+                label={t('home.teasOwned') as string}
+              />
+            </motion.div>
           </div>
-        </section>
+        </motion.section>
 
         {/* This Week */}
         {weekLogs.length > 0 && (
-          <section className="px-6 pb-6">
+          <motion.section
+            className="px-6 pb-6"
+            variants={staggerContainer}
+            initial="initial"
+            animate="animate"
+          >
             <h2 className="text-lg font-bold text-neutral-dark dark:text-white mb-4">{t('home.thisWeek')}</h2>
             <div className="space-y-3">
               {weekLogs.slice(0, 5).map((log) => (
-                <BrewLogListItem key={log.documentId} log={log} />
+                <motion.div key={log.documentId} variants={staggerItem}>
+                  <BrewLogListItem log={log} />
+                </motion.div>
               ))}
             </div>
-          </section>
+          </motion.section>
         )}
       </div>
     </div>

@@ -38,5 +38,5 @@ export const TEAWARE_TYPE_LABELS: Record<string, string> = {
 
 export const TEAWARE_STATUSES = ['Active', 'Broken', 'Sold'] as const;
 
-export const JWT_KEY = 'tealog_jwt';
-export const USER_KEY = 'tealog_user';
+export const JWT_KEY = 'chacha_jwt';
+export const USER_KEY = 'chacha_user';

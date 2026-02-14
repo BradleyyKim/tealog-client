@@ -1,14 +1,14 @@
 @import "tailwindcss";
 
 @theme {
-  /* Light mode: beige + sage green */
+  /* Light mode: warm beige + sage green */
   --color-primary: #6b8e71;
   --color-primary-dark: #5a7d5f;
-  --color-bg-light: #faf7f4;
+  --color-bg-light: #f0e9df;
   --color-bg-dark: #1a1512;
-  --color-surface-light: #ffffff;
+  --color-surface-light: #faf7f4;
   --color-surface-dark: #231e19;
-  --color-stone-surface: #f5f0eb;
+  --color-stone-surface: #ebe3d7;
   --color-stone-surface-dark: #2a2320;
   --color-text-main: #3d3028;
   --color-text-muted: #8a7d73;
@@ -16,7 +16,7 @@
   --color-neutral-mid: #a09488;
   --color-neutral-light: #e8e2dc;
 
-  --font-display: "Manrope", sans-serif;
+  --font-display: "Manrope", "Pretendard Variable", -apple-system, sans-serif;
   --font-serif: "Playfair Display", serif;
 
   --shadow-soft: 0 10px 40px -10px rgba(107, 142, 113, 0.18);
@@ -61,4 +61,14 @@
   background: rgba(26, 21, 18, 0.7);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }

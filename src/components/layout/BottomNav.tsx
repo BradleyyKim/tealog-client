@@ -2,6 +2,7 @@ import { NavLink } from 'react-router-dom';
 import { cn } from '@/lib/utils';
 import { useI18n } from '@/contexts/I18nContext';
 import type { TranslationKey } from '@/lib/i18n';
+import { motion } from 'framer-motion';
 
 const navItems = [
   { to: '/', icon: 'spa', labelKey: 'nav.home' as TranslationKey },
@@ -23,7 +24,7 @@ export default function BottomNav() {
               end={item.to === '/'}
               className={({ isActive }) =>
                 cn(
-                  'flex flex-col items-center gap-1 transition-colors',
+                  'flex flex-col items-center gap-1 transition-colors relative',
                   isActive
                     ? 'text-primary'
                     : 'text-neutral-mid hover:text-neutral-dark dark:hover:text-white',
@@ -32,6 +33,13 @@ export default function BottomNav() {
             >
               {({ isActive }) => (
                 <>
+                  {isActive && (
+                    <motion.div
+                      layoutId="activeTab"
+                      className="absolute -top-3 left-1/2 -translate-x-1/2 w-8 h-0.5 bg-primary rounded-full"
+                      transition={{ type: 'spring', stiffness: 380, damping: 30 }}
+                    />
+                  )}
                   <span className={isActive && !item.outlined ? 'material-icons' : 'material-icons-outlined'}>
                     {item.icon}
                   </span>

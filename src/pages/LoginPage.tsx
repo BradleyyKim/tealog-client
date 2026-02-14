@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { useI18n } from '@/contexts/I18nContext';
 import toast from 'react-hot-toast';
+import { motion } from 'framer-motion';
 
 export default function LoginPage() {
   const { login, register } = useAuth();
@@ -37,19 +38,39 @@ export default function LoginPage() {
       <div className="w-full max-w-sm">
         {/* Logo */}
         <div className="text-center mb-10">
-          <div className="inline-flex items-center gap-2 mb-4">
+          <motion.div
+            className="inline-flex items-center gap-2 mb-4"
+            initial={{ scale: 0.5, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            transition={{ type: 'spring', stiffness: 260, damping: 20 }}
+          >
             <span className="material-icons text-primary text-4xl">spa</span>
-          </div>
-          <h1 className="text-3xl font-bold text-neutral-dark dark:text-white font-display">
+          </motion.div>
+          <motion.h1
+            className="text-3xl font-bold text-neutral-dark dark:text-white font-display"
+            initial={{ opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.15, duration: 0.4 }}
+          >
             {t('app.name')}
-          </h1>
-          <p className="text-text-muted mt-2 text-sm">{t('app.tagline')}</p>
+          </motion.h1>
+          <motion.p
+            className="text-text-muted mt-2 text-sm"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.3, duration: 0.4 }}
+          >
+            {t('app.tagline')}
+          </motion.p>
         </div>
 
         {/* Form */}
-        <form
+        <motion.form
           onSubmit={handleSubmit}
           className="bg-white dark:bg-surface-dark rounded-2xl p-6 shadow-zen space-y-4 border border-neutral-light dark:border-neutral-dark/30"
+          initial={{ opacity: 0, y: 24 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.2, duration: 0.45, ease: 'easeOut' }}
         >
           <h2 className="text-lg font-bold text-neutral-dark dark:text-white">
             {isRegister ? t('login.createAccount') : t('login.welcomeBack')}
@@ -134,7 +155,7 @@ export default function LoginPage() {
               {isRegister ? t('login.signIn') : t('login.signUp')}
             </button>
           </p>
-        </form>
+        </motion.form>
       </div>
     </div>
   );

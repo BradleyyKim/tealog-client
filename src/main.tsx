@@ -5,15 +5,21 @@ import { Toaster } from 'react-hot-toast';
 import { queryClient } from '@/lib/query-client';
 import { AuthProvider } from '@/contexts/AuthContext';
 import { I18nProvider } from '@/contexts/I18nContext';
+import { migrateStorage } from '@/lib/migrate-storage';
+import SplashScreen from '@/components/SplashScreen';
 import App from './App';
 import './index.css';
+
+migrateStorage();
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <QueryClientProvider client={queryClient}>
       <I18nProvider>
       <AuthProvider>
-        <App />
+        <SplashScreen>
+          <App />
+        </SplashScreen>
         <Toaster
           position="top-center"
           toastOptions={{

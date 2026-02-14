@@ -3,6 +3,8 @@ import type { Teaware } from '@/types';
 import { getImageUrl, formatDisplayCategory } from '@/lib/utils';
 import { useI18n } from '@/contexts/I18nContext';
 import type { TranslationKey } from '@/lib/i18n';
+import { motion } from 'framer-motion';
+import { cardHover } from '@/lib/animations';
 
 export default function TeawareCard({ teaware }: { teaware: Teaware }) {
   const navigate = useNavigate();
@@ -10,9 +12,10 @@ export default function TeawareCard({ teaware }: { teaware: Teaware }) {
   const imgUrl = teaware.photo?.url ? getImageUrl(teaware.photo.url) : null;
 
   return (
-    <div
+    <motion.div
       onClick={() => navigate(`/teaware/${teaware.documentId}/edit`)}
       className="group cursor-pointer"
+      {...cardHover}
     >
       <div className="relative overflow-hidden rounded-xl bg-neutral-light/50 dark:bg-neutral-dark/30 mb-3 shadow-sm hover:shadow-xl transition-all duration-500 aspect-square">
         {imgUrl ? (
@@ -52,6 +55,6 @@ export default function TeawareCard({ teaware }: { teaware: Teaware }) {
           <p className="text-xs text-text-muted">{teaware.volume_ml}ml</p>
         )}
       </div>
-    </div>
+    </motion.div>
   );
 }

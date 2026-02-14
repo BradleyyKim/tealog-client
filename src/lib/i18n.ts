@@ -1,11 +1,11 @@
 export type Locale = 'en' | 'ko';
 
-export const LOCALE_KEY = 'tealog_locale';
+export const LOCALE_KEY = 'chacha_locale';
 
 const en = {
   // App
-  'app.name': 'TeaLog',
-  'app.tagline': 'Your personal tea diary',
+  'app.name': 'ChaCha',
+  'app.tagline': 'Slowly savor tea, gradually get better',
 
   // Common
   'common.save': 'Save',
@@ -181,8 +181,8 @@ const en = {
 
 const ko: Record<keyof typeof en, string> = {
   // App
-  'app.name': 'TeaLog',
-  'app.tagline': '나만의 차 다이어리',
+  'app.name': 'ChaCha',
+  'app.tagline': '천천히 차를 음미하며 차차 나아지다',
 
   // Common
   'common.save': '저장',
