@@ -10,16 +10,6 @@ export const TEA_CATEGORIES = [
   'Herbal',
 ] as const;
 
-export const TEA_CATEGORY_LABELS: Record<string, string> = {
-  Green: 'Green',
-  White: 'White',
-  Oolong: 'Oolong',
-  Black: 'Black',
-  Sheng_Puerh: 'Sheng Pu-erh',
-  Shou_Puerh: 'Shou Pu-erh',
-  Herbal: 'Herbal',
-};
-
 export const TEAWARE_TYPES = [
   'Gaiwan',
   'Yixing_Pot',
@@ -27,14 +17,6 @@ export const TEAWARE_TYPES = [
   'Pitcher',
   'Cup',
 ] as const;
-
-export const TEAWARE_TYPE_LABELS: Record<string, string> = {
-  Gaiwan: 'Gaiwan',
-  Yixing_Pot: 'Yixing Pot',
-  Glass_Pot: 'Glass Pot',
-  Pitcher: 'Pitcher',
-  Cup: 'Cup',
-};
 
 export const TEAWARE_STATUSES = ['Active', 'Broken', 'Sold'] as const;
 

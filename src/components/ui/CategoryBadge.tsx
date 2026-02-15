@@ -1,5 +1,6 @@
 import { cn } from '@/lib/utils';
-import { formatDisplayCategory } from '@/lib/utils';
+import { useI18n } from '@/contexts/I18nContext';
+import type { TranslationKey } from '@/lib/i18n';
 
 const colorMap: Record<string, string> = {
   Green: 'bg-emerald-100/80 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-300',
@@ -12,14 +13,18 @@ const colorMap: Record<string, string> = {
 };
 
 export default function CategoryBadge({ category }: { category: string }) {
+  const { t } = useI18n();
+  const key = `category.${category}` as TranslationKey;
+  const translated = t(key);
+
   return (
     <span
       className={cn(
         'inline-flex items-center px-2.5 py-0.5 rounded-md text-xs font-bold',
-        colorMap[category] || 'bg-stone-100 text-stone-600',
+        colorMap[category] || 'bg-stone-100 text-stone-600 dark:bg-stone-700/30 dark:text-stone-300',
       )}
     >
-      {formatDisplayCategory(category)}
+      {translated === key ? category : translated}
     </span>
   );
 }

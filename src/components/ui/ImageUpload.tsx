@@ -7,9 +7,10 @@ import toast from 'react-hot-toast';
 interface ImageUploadProps {
   currentUrl?: string;
   onUploaded: (id: number) => void;
+  onPendingChange?: (pending: boolean) => void;
 }
 
-export default function ImageUpload({ currentUrl, onUploaded }: ImageUploadProps) {
+export default function ImageUpload({ currentUrl, onUploaded, onPendingChange }: ImageUploadProps) {
   const fileRef = useRef<HTMLInputElement>(null);
   const upload = useUpload();
   const { t } = useI18n();
@@ -20,6 +21,7 @@ export default function ImageUpload({ currentUrl, onUploaded }: ImageUploadProps
     if (!file) return;
 
     setPreview(URL.createObjectURL(file));
+    onPendingChange?.(true);
 
     try {
       const result = await upload.mutateAsync(file);
@@ -27,6 +29,8 @@ export default function ImageUpload({ currentUrl, onUploaded }: ImageUploadProps
     } catch {
       toast.error(t('toast.uploadFailed'));
       setPreview(null);
+    } finally {
+      onPendingChange?.(false);
     }
   };
 
@@ -41,7 +45,15 @@ export default function ImageUpload({ currentUrl, onUploaded }: ImageUploadProps
         className="w-full h-40 rounded-xl border-2 border-dashed border-neutral-light dark:border-neutral-dark/50 flex flex-col items-center justify-center gap-2 hover:border-primary/50 transition-colors overflow-hidden relative"
       >
         {displayUrl ? (
-          <img src={displayUrl} alt="Preview" className="absolute inset-0 w-full h-full object-cover" />
+          <>
+            <img src={displayUrl} alt="Preview" className="absolute inset-0 w-full h-full object-cover" />
+            {upload.isPending && (
+              <div className="absolute inset-0 bg-black/40 flex flex-col items-center justify-center gap-2">
+                <span className="material-icons text-white text-2xl animate-spin">autorenew</span>
+                <span className="text-xs text-white font-medium">{t('component.uploading')}</span>
+              </div>
+            )}
+          </>
         ) : (
           <>
             <span className="material-icons-outlined text-3xl text-text-muted">add_a_photo</span>

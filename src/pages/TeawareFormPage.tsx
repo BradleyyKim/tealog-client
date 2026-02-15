@@ -5,7 +5,8 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { teawareSchema, type TeawareSchemaType } from '@/schemas/teaware';
 import { useTeaware, useCreateTeaware, useUpdateTeaware, useDeleteTeaware } from '@/hooks/useTeaware';
 import { useI18n } from '@/contexts/I18nContext';
-import { TEAWARE_TYPES, TEAWARE_STATUSES } from '@/lib/constants';
+import { TEAWARE_STATUSES } from '@/lib/constants';
+import { useTeawareTypes } from '@/hooks/useCategories';
 import type { TranslationKey } from '@/lib/i18n';
 import PageHeader from '@/components/layout/PageHeader';
 import ImageUpload from '@/components/ui/ImageUpload';
@@ -18,6 +19,7 @@ export default function TeawareFormPage() {
   const navigate = useNavigate();
   const { t } = useI18n();
   const isEdit = !!id;
+  const { types } = useTeawareTypes();
 
   const { data: existing, isLoading } = useTeaware(id);
   const createMutation = useCreateTeaware();
@@ -25,6 +27,7 @@ export default function TeawareFormPage() {
   const deleteMutation = useDeleteTeaware();
 
   const [photoId, setPhotoId] = useState<number | null>(null);
+  const [isUploading, setIsUploading] = useState(false);
   const [showDelete, setShowDelete] = useState(false);
 
   const {
@@ -90,6 +93,7 @@ export default function TeawareFormPage() {
         <ImageUpload
           currentUrl={existing?.photo?.url}
           onUploaded={(id) => setPhotoId(id)}
+          onPendingChange={setIsUploading}
         />
 
         <div>
@@ -114,9 +118,11 @@ export default function TeawareFormPage() {
               className="w-full px-4 py-3 rounded-xl bg-white dark:bg-surface-dark text-sm text-neutral-dark dark:text-white border border-neutral-light dark:border-neutral-dark/50 focus:ring-2 focus:ring-primary/50 outline-none appearance-none"
             >
               <option value="">{t('teawareForm.selectType')}</option>
-              {TEAWARE_TYPES.map((tw) => (
-                <option key={tw} value={tw}>{t(`teawareType.${tw}` as TranslationKey)}</option>
-              ))}
+              {types.map((tw) => {
+                const key = `teawareType.${tw}` as TranslationKey;
+                const translated = t(key);
+                return <option key={tw} value={tw}>{translated === key ? tw : translated}</option>;
+              })}
             </select>
           </div>
           <div>
@@ -169,10 +175,10 @@ export default function TeawareFormPage() {
 
         <button
           type="submit"
-          disabled={isSubmitting}
+          disabled={isSubmitting || isUploading}
           className="w-full bg-primary text-white font-bold py-3 rounded-xl shadow-lg shadow-primary/20 hover:bg-primary-dark transition-colors disabled:opacity-50"
         >
-          {isSubmitting ? t('common.saving') : isEdit ? t('teawareForm.updateTeaware') : t('teawareForm.addTeaware')}
+          {isUploading ? t('component.uploading') : isSubmitting ? t('common.saving') : isEdit ? t('teawareForm.updateTeaware') : t('teawareForm.addTeaware')}
         </button>
 
         {isEdit && (

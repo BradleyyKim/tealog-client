@@ -1,4 +1,5 @@
 import { createContext, useContext, useState, useCallback, useEffect, type ReactNode } from 'react';
+import { useQueryClient } from '@tanstack/react-query';
 import type { AuthUser, LoginResponse } from '@/types';
 import { API_URL, JWT_KEY, USER_KEY } from '@/lib/constants';
 
@@ -6,6 +7,7 @@ interface AuthContextType {
   user: AuthUser | null;
   token: string | null;
   isAuthenticated: boolean;
+  isReady: boolean;
   login: (identifier: string, password: string) => Promise<void>;
   register: (username: string, email: string, password: string) => Promise<void>;
   logout: () => void;
@@ -14,6 +16,7 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType | null>(null);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
+  const qc = useQueryClient();
   const [user, setUser] = useState<AuthUser | null>(() => {
     const stored = localStorage.getItem(USER_KEY);
     return stored ? JSON.parse(stored) : null;
@@ -21,6 +24,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [token, setToken] = useState<string | null>(() =>
     localStorage.getItem(JWT_KEY),
   );
+  const [isReady, setIsReady] = useState(() => {
+    const t = localStorage.getItem(JWT_KEY);
+    if (!t) return true; // no token → ready immediately
+    const u = localStorage.getItem(USER_KEY);
+    return !!u; // user restored from localStorage → ready immediately
+  });
 
   useEffect(() => {
     if (token && !user) {
@@ -40,6 +49,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           setUser(null);
           localStorage.removeItem(JWT_KEY);
           localStorage.removeItem(USER_KEY);
+        })
+        .finally(() => {
+          setIsReady(true);
         });
     }
   }, [token, user]);
@@ -90,11 +102,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     localStorage.removeItem(USER_KEY);
     setToken(null);
     setUser(null);
-  }, []);
+    qc.clear();
+  }, [qc]);
 
   return (
     <AuthContext.Provider
-      value={{ user, token, isAuthenticated: !!token, login, register, logout }}
+      value={{ user, token, isAuthenticated: !!token, isReady, login, register, logout }}
     >
       {children}
     </AuthContext.Provider>

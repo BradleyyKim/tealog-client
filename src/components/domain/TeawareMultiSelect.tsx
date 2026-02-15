@@ -1,6 +1,7 @@
 import { useTeawares } from '@/hooks/useTeaware';
 import { useI18n } from '@/contexts/I18nContext';
-import { cn, formatDisplayCategory } from '@/lib/utils';
+import { cn } from '@/lib/utils';
+import type { TranslationKey } from '@/lib/i18n';
 
 interface TeawareMultiSelectProps {
   value: string[];
@@ -51,7 +52,7 @@ export default function TeawareMultiSelect({ value, onChange }: TeawareMultiSele
             </span>
             {tw.name}
             {tw.type && (
-              <span className="text-xs opacity-60">({formatDisplayCategory(tw.type)})</span>
+              <span className="text-xs opacity-60">({(() => { const k = `teawareType.${tw.type}` as TranslationKey; const v = t(k); return v === k ? tw.type : v; })()})</span>
             )}
           </button>
         ))}

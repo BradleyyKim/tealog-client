@@ -1,6 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 import type { Teaware } from '@/types';
-import { getImageUrl, formatDisplayCategory } from '@/lib/utils';
+import { getImageUrl } from '@/lib/utils';
 import { useI18n } from '@/contexts/I18nContext';
 import type { TranslationKey } from '@/lib/i18n';
 import { motion } from 'framer-motion';
@@ -10,6 +10,8 @@ export default function TeawareCard({ teaware }: { teaware: Teaware }) {
   const navigate = useNavigate();
   const { t } = useI18n();
   const imgUrl = teaware.photo?.url ? getImageUrl(teaware.photo.url) : null;
+  const typeKey = teaware.type ? `teawareType.${teaware.type}` as TranslationKey : null;
+  const typeLabel = typeKey ? (() => { const v = t(typeKey); return v === typeKey ? teaware.type : v; })() : null;
 
   return (
     <motion.div
@@ -47,7 +49,7 @@ export default function TeawareCard({ teaware }: { teaware: Teaware }) {
           {teaware.name}
         </h3>
         <p className="text-xs text-text-muted mt-0.5">
-          {[teaware.type ? formatDisplayCategory(teaware.type) : null, teaware.material]
+          {[typeLabel, teaware.material]
             .filter(Boolean)
             .join(' \u2022 ') || '\u00A0'}
         </p>

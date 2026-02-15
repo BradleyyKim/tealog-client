@@ -2,27 +2,34 @@ import { useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTeawares } from '@/hooks/useTeaware';
 import { useI18n } from '@/contexts/I18nContext';
+import { useTeawareTypes, DEFAULT_TEAWARE_TYPES } from '@/hooks/useCategories';
 import TeawareCard from '@/components/domain/TeawareCard';
 import FilterChips from '@/components/ui/FilterChips';
 import LoadingSpinner from '@/components/ui/LoadingSpinner';
 import EmptyState from '@/components/ui/EmptyState';
-import { TEAWARE_TYPES } from '@/lib/constants';
+import CategoryManagerModal from '@/components/ui/CategoryManagerModal';
 import type { TranslationKey } from '@/lib/i18n';
 import { motion } from 'framer-motion';
-import { pageTransition, pageTransitionProps, staggerContainer, staggerItem } from '@/lib/animations';
+import { pageTransition, pageTransitionProps } from '@/lib/animations';
 
 export default function TeawareListPage() {
   const navigate = useNavigate();
   const { t } = useI18n();
   const { data: teawares, isLoading } = useTeawares();
+  const { types, add, remove } = useTeawareTypes();
   const [typeFilter, setTypeFilter] = useState('');
+  const [showManager, setShowManager] = useState(false);
 
   const filterOptions = useMemo(
     () => [
       { label: t('common.all'), value: '' },
-      ...TEAWARE_TYPES.map((tw) => ({ label: t(`teawareType.${tw}` as TranslationKey), value: tw })),
+      ...types.map((tw) => {
+        const key = `teawareType.${tw}` as TranslationKey;
+        const translated = t(key);
+        return { label: translated === key ? tw : translated, value: tw };
+      }),
     ],
-    [t],
+    [t, types],
   );
 
   const filtered = useMemo(() => {
@@ -46,14 +53,13 @@ export default function TeawareListPage() {
           <h1 className="font-serif text-3xl text-gray-900 dark:text-gray-100 tracking-tight">
             {t('teaware.title')}
           </h1>
-          <button
-            onClick={() => navigate('/teaware/new')}
-            className="w-10 h-10 rounded-full bg-primary flex items-center justify-center hover:bg-primary-dark transition-colors"
-          >
-            <span className="material-icons text-white text-xl">add</span>
-          </button>
         </div>
-        <FilterChips options={filterOptions} selected={typeFilter} onChange={setTypeFilter} />
+        <FilterChips
+          options={filterOptions}
+          selected={typeFilter}
+          onChange={setTypeFilter}
+          onManage={() => setShowManager(true)}
+        />
       </header>
 
       {/* Grid Content */}
@@ -69,19 +75,32 @@ export default function TeawareListPage() {
           />
         )}
 
-        <motion.div
-          className="grid grid-cols-2 gap-4"
-          variants={staggerContainer}
-          initial="initial"
-          animate="animate"
-        >
-          {filtered.map((tw) => (
-            <motion.div key={tw.documentId} variants={staggerItem}>
-              <TeawareCard teaware={tw} />
-            </motion.div>
-          ))}
-        </motion.div>
+        {filtered.length > 0 && (
+          <motion.div
+            className="grid grid-cols-2 gap-4"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.25 }}
+          >
+            {filtered.map((tw) => (
+              <div key={tw.documentId}>
+                <TeawareCard teaware={tw} />
+              </div>
+            ))}
+          </motion.div>
+        )}
       </div>
+
+      <CategoryManagerModal
+        open={showManager}
+        onClose={() => setShowManager(false)}
+        title={t('categoryManager.teawareTitle')}
+        categories={types}
+        defaults={DEFAULT_TEAWARE_TYPES}
+        translationPrefix="teawareType"
+        onAdd={add}
+        onRemove={remove}
+      />
     </motion.div>
   );
 }

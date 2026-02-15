@@ -12,7 +12,7 @@ const I18nContext = createContext<I18nContextValue | null>(null);
 function getInitialLocale(): Locale {
   const stored = localStorage.getItem(LOCALE_KEY);
   if (stored === 'ko' || stored === 'en') return stored;
-  return 'en';
+  return 'ko';
 }
 
 export function I18nProvider({ children }: { children: ReactNode }) {

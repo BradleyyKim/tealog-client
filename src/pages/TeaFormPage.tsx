@@ -5,7 +5,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { teaLeafSchema, type TeaLeafSchemaType } from '@/schemas/tea-leaf';
 import { useTeaLeaf, useCreateTeaLeaf, useUpdateTeaLeaf, useDeleteTeaLeaf } from '@/hooks/useTeaLeaves';
 import { useI18n } from '@/contexts/I18nContext';
-import { TEA_CATEGORIES } from '@/lib/constants';
+import { useTeaCategories } from '@/hooks/useCategories';
 import type { TranslationKey } from '@/lib/i18n';
 import PageHeader from '@/components/layout/PageHeader';
 import ImageUpload from '@/components/ui/ImageUpload';
@@ -18,6 +18,7 @@ export default function TeaFormPage() {
   const navigate = useNavigate();
   const { t } = useI18n();
   const isEdit = !!id;
+  const { categories } = useTeaCategories();
 
   const { data: existing, isLoading } = useTeaLeaf(id);
   const createMutation = useCreateTeaLeaf();
@@ -25,6 +26,7 @@ export default function TeaFormPage() {
   const deleteMutation = useDeleteTeaLeaf();
 
   const [photoId, setPhotoId] = useState<number | null>(null);
+  const [isUploading, setIsUploading] = useState(false);
   const [showDelete, setShowDelete] = useState(false);
 
   const {
@@ -90,6 +92,7 @@ export default function TeaFormPage() {
         <ImageUpload
           currentUrl={existing?.cover_photo?.url}
           onUploaded={(id) => setPhotoId(id)}
+          onPendingChange={setIsUploading}
         />
 
         <div>
@@ -113,9 +116,11 @@ export default function TeaFormPage() {
             className="w-full px-4 py-3 rounded-xl bg-white dark:bg-surface-dark text-sm text-neutral-dark dark:text-white border border-neutral-light dark:border-neutral-dark/50 focus:ring-2 focus:ring-primary/50 outline-none appearance-none"
           >
             <option value="">{t('teaForm.selectCategory')}</option>
-            {TEA_CATEGORIES.map((c) => (
-              <option key={c} value={c}>{t(`category.${c}` as TranslationKey)}</option>
-            ))}
+            {categories.map((c) => {
+              const key = `category.${c}` as TranslationKey;
+              const translated = t(key);
+              return <option key={c} value={c}>{translated === key ? c : translated}</option>;
+            })}
           </select>
         </div>
 
@@ -166,10 +171,10 @@ export default function TeaFormPage() {
 
         <button
           type="submit"
-          disabled={isSubmitting}
+          disabled={isSubmitting || isUploading}
           className="w-full bg-primary text-white font-bold py-3 rounded-xl shadow-lg shadow-primary/20 hover:bg-primary-dark transition-colors disabled:opacity-50"
         >
-          {isSubmitting ? t('common.saving') : isEdit ? t('teaForm.updateTea') : t('teaForm.addTea')}
+          {isUploading ? t('component.uploading') : isSubmitting ? t('common.saving') : isEdit ? t('teaForm.updateTea') : t('teaForm.addTea')}
         </button>
 
         {isEdit && (

@@ -50,6 +50,13 @@ const en = {
   'home.dayStreak': 'Day Streak',
   'home.teasOwned': 'Teas Owned',
   'home.thisWeek': 'This Week',
+  'home.weatherFallback': 'Tea Time',
+  'home.dailyQuote': 'A Warm Word for Today',
+  'home.brewCta': "Record today's tea moment?",
+  'home.startBrew': 'Start Brewing',
+  'home.viewAll': 'View All',
+  'brewList.title': 'Brew Logs',
+  'brewList.empty': 'No brew logs yet.',
 
   // Tea Collection
   'teaCollection.title': 'My Tea Collection',
@@ -177,6 +184,13 @@ const en = {
   'toast.deleteFailed': 'Failed to delete',
   'toast.saveFailed': 'Failed to save',
   'toast.uploadFailed': 'Image upload failed',
+
+  // Category Manager
+  'categoryManager.title': 'Manage Categories',
+  'categoryManager.teawareTitle': 'Manage Teaware Types',
+  'categoryManager.add': 'Add',
+  'categoryManager.placeholder': 'New category name...',
+  'categoryManager.default': 'Default',
 } as const;
 
 const ko: Record<keyof typeof en, string> = {
@@ -227,6 +241,13 @@ const ko: Record<keyof typeof en, string> = {
   'home.dayStreak': '연속 일수',
   'home.teasOwned': '보유한 차',
   'home.thisWeek': '이번 주',
+  'home.weatherFallback': '티 타임',
+  'home.dailyQuote': '오늘의 따뜻한 한 마디',
+  'home.brewCta': '오늘의 차 한 잔, 기록해볼까요?',
+  'home.startBrew': '기록하기',
+  'home.viewAll': '전체 보기',
+  'brewList.title': '브루 기록',
+  'brewList.empty': '아직 기록이 없어요.',
 
   // Tea Collection
   'teaCollection.title': '내 차 컬렉션',
@@ -354,6 +375,13 @@ const ko: Record<keyof typeof en, string> = {
   'toast.deleteFailed': '삭제에 실패했습니다',
   'toast.saveFailed': '저장에 실패했습니다',
   'toast.uploadFailed': '이미지 업로드에 실패했습니다',
+
+  // Category Manager
+  'categoryManager.title': '카테고리 관리',
+  'categoryManager.teawareTitle': '다구 유형 관리',
+  'categoryManager.add': '추가',
+  'categoryManager.placeholder': '새 카테고리 이름...',
+  'categoryManager.default': '기본',
 };
 
 export type TranslationKey = keyof typeof en;

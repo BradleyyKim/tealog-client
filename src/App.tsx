@@ -9,6 +9,7 @@ import TeawareListPage from '@/pages/TeawareListPage';
 import TeawareFormPage from '@/pages/TeawareFormPage';
 import BrewLogFormPage from '@/pages/BrewLogFormPage';
 import BrewLogDetailPage from '@/pages/BrewLogDetailPage';
+import BrewLogListPage from '@/pages/BrewLogListPage';
 import ProfilePage from '@/pages/ProfilePage';
 
 export default function App() {
@@ -19,6 +20,7 @@ export default function App() {
         <Route element={<ProtectedLayout />}>
           <Route element={<AppShell />}>
             <Route path="/" element={<HomePage />} />
+            <Route path="/brew" element={<BrewLogListPage />} />
             <Route path="/teas" element={<TeaCollectionPage />} />
             <Route path="/teaware" element={<TeawareListPage />} />
             <Route path="/profile" element={<ProfilePage />} />

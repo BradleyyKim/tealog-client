@@ -1,21 +1,55 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useI18n } from '@/contexts/I18nContext';
+import { useAuth } from '@/contexts/AuthContext';
 
 const SPLASH_KEY = 'chacha_splash_shown';
 
-export default function SplashScreen({ children }: { children: React.ReactNode }) {
-  const { t } = useI18n();
-  const [show, setShow] = useState(() => !sessionStorage.getItem(SPLASH_KEY));
+const SPLASH_LINES = [
+  { text: 'ChaCha', style: 'title' as const },
+  { text: '천천히 한 걸음씩.', style: 'body' as const },
+  { text: '차차 나아질거예요.', style: 'body' as const },
+  { text: '사랑하는 찬미의 삶을 응원합니다.', style: 'body' as const },
+  { text: '당신의 삶을 함께 음미하겠습니다.', style: 'body' as const },
+];
 
+const LINE_DELAYS = [0.5, 1.5, 2.5, 3.5, 4.5]; // seconds
+const MIN_DISPLAY_TIME = 6000; // ms
+
+export default function SplashScreen({ children }: { children: React.ReactNode }) {
+  const { isReady } = useAuth();
+  const [alreadyShown] = useState(() => !!sessionStorage.getItem(SPLASH_KEY));
+  const [show, setShow] = useState(!alreadyShown);
+  const [minTimePassed, setMinTimePassed] = useState(false);
+
+  // Minimum animation timer
   useEffect(() => {
     if (!show) return;
-    const timer = setTimeout(() => {
-      sessionStorage.setItem(SPLASH_KEY, '1');
-      setShow(false);
-    }, 2500);
+    const timer = setTimeout(() => setMinTimePassed(true), MIN_DISPLAY_TIME);
     return () => clearTimeout(timer);
   }, [show]);
+
+  // Dismiss splash when both conditions met
+  useEffect(() => {
+    if (show && isReady && minTimePassed) {
+      sessionStorage.setItem(SPLASH_KEY, '1');
+      setShow(false);
+    }
+  }, [show, isReady, minTimePassed]);
+
+  // Session revisit: skip splash, wait for isReady only
+  if (alreadyShown && !isReady) {
+    return (
+      <div className="fixed inset-0 z-[9999] bg-bg-light dark:bg-bg-dark flex items-center justify-center">
+        <motion.span
+          className="material-icons text-primary text-4xl"
+          animate={{ rotate: 360 }}
+          transition={{ duration: 1.2, repeat: Infinity, ease: 'linear' }}
+        >
+          autorenew
+        </motion.span>
+      </div>
+    );
+  }
 
   return (
     <>
@@ -25,9 +59,9 @@ export default function SplashScreen({ children }: { children: React.ReactNode }
             key="splash"
             className="fixed inset-0 z-[9999] bg-bg-light dark:bg-bg-dark flex flex-col items-center justify-center"
             exit={{ opacity: 0 }}
-            transition={{ duration: 0.4 }}
+            transition={{ duration: 0.5 }}
           >
-            {/* Icon */}
+            {/* Tea icon */}
             <motion.span
               className="material-icons text-primary text-6xl"
               initial={{ opacity: 0, scale: 0.5 }}
@@ -37,30 +71,26 @@ export default function SplashScreen({ children }: { children: React.ReactNode }
               spa
             </motion.span>
 
-            {/* App name */}
-            <motion.h1
-              className="text-4xl font-bold text-neutral-dark dark:text-white mt-4 font-display"
-              initial={{ opacity: 0, y: 12 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.5, duration: 0.5 }}
-            >
-              {t('app.name')}
-            </motion.h1>
-
-            {/* Tagline */}
-            <motion.p
-              className="text-text-muted text-sm mt-3 text-center px-8"
-              initial={{ opacity: 0, y: 8 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 1.0, duration: 0.5 }}
-            >
-              {t('app.tagline')}
-            </motion.p>
+            {/* Sequential text lines */}
+            {SPLASH_LINES.map((line, i) => (
+              <motion.p
+                key={i}
+                className={
+                  line.style === 'title'
+                    ? 'text-4xl font-bold text-neutral-dark dark:text-white mt-4 font-display'
+                    : 'text-text-muted text-sm mt-3 text-center px-8'
+                }
+                initial={{ opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: LINE_DELAYS[i], duration: 0.5 }}
+              >
+                {line.text}
+              </motion.p>
+            ))}
           </motion.div>
         )}
       </AnimatePresence>
 
-      {/* App content (renders behind splash, visible after exit) */}
       {children}
     </>
   );

@@ -2,9 +2,10 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useI18n } from '@/contexts/I18nContext';
 import { useBrewLogs } from '@/hooks/useBrewLogs';
 import { useTeaLeaves } from '@/hooks/useTeaLeaves';
+import { useWeather } from '@/hooks/useWeather';
+import { useDailyQuote } from '@/hooks/useDailyQuote';
 import LoadingSpinner from '@/components/ui/LoadingSpinner';
 import StatCard from '@/components/domain/StatCard';
-import BrewLogHeroCard from '@/components/domain/BrewLogHeroCard';
 import BrewLogListItem from '@/components/domain/BrewLogListItem';
 import EmptyState from '@/components/ui/EmptyState';
 import { useNavigate } from 'react-router-dom';
@@ -45,15 +46,22 @@ export default function HomePage() {
   const navigate = useNavigate();
   const { data: brewLogs, isLoading: logsLoading } = useBrewLogs();
   const { data: teas } = useTeaLeaves();
+  const { data: weather } = useWeather();
+  const { quote } = useDailyQuote();
   const greeting = useGreeting();
 
   if (logsLoading) return <LoadingSpinner />;
 
   const logs = brewLogs || [];
   const weekLogs = logs.filter((l) => isThisWeek(new Date(l.brewed_at), { weekStartsOn: 1 }));
-  const recentLogs = logs.slice(0, 3);
   const streak = calculateStreak(logs);
   const teasCount = teas?.length || 0;
+
+  const headerIcon = weather?.icon || greeting.icon;
+  const headerLabel = weather
+    ? `${weather.description}, ${weather.temp}°C`
+    : t('home.weatherFallback');
+  const weatherSuggestion = weather?.suggestion || null;
 
   return (
     <div className="relative">
@@ -69,82 +77,83 @@ export default function HomePage() {
       >
         <div>
           <div className="flex items-center gap-2 text-neutral-mid dark:text-gray-400 mb-1">
-            <span className="material-icons-outlined text-xl text-primary">{greeting.icon}</span>
-            <span className="text-sm font-semibold tracking-wide uppercase">{t('home.teaTime')}</span>
+            <span className="material-icons-outlined text-xl text-primary">{headerIcon}</span>
+            <span className="text-sm font-semibold tracking-wide uppercase">{headerLabel}</span>
           </div>
           <h1 className="text-3xl font-bold text-neutral-dark dark:text-white">
-            {greeting.text},
-            <br />
-            {user?.username || t('home.teaLover')}
+            {greeting.text}, {user?.displayName || user?.username || t('home.teaLover')}
           </h1>
+          {weatherSuggestion && (
+            <p className="text-sm text-neutral-mid dark:text-gray-400 mt-1.5">
+              {weatherSuggestion}
+            </p>
+          )}
         </div>
-        <button
-          onClick={() => navigate('/profile')}
-          className="w-12 h-12 rounded-full overflow-hidden border-2 border-primary/30 bg-primary/10 flex items-center justify-center"
-        >
-          <span className="material-icons text-primary text-xl">person</span>
-        </button>
       </motion.header>
 
       <div className="z-10 relative">
-        {/* Featured: Last Brewed */}
-        {recentLogs.length > 0 && (
+        {/* Daily Quote */}
+        {quote && (
           <motion.section
-            className="mt-4 pl-6"
-            variants={staggerContainer}
-            initial="initial"
-            animate="animate"
+            className="px-6 mt-4"
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.4, delay: 0.1 }}
           >
-            <div className="flex justify-between items-end pr-6 mb-4">
-              <h2 className="text-lg font-bold text-neutral-dark dark:text-white">{t('home.lastBrewed')}</h2>
-            </div>
-            <div className="flex overflow-x-auto gap-4 pb-6 pr-6 no-scrollbar snap-x snap-mandatory">
-              {recentLogs.map((log) => (
-                <motion.div key={log.documentId} variants={staggerItem}>
-                  <BrewLogHeroCard log={log} />
-                </motion.div>
-              ))}
-              {/* Suggestion card */}
-              <motion.div
-                variants={staggerItem}
-                className="min-w-[85%] snap-center relative aspect-[4/5] rounded-xl overflow-hidden border border-neutral-light dark:border-neutral-dark"
-              >
-                <div className="absolute inset-0 bg-bg-light/80 dark:bg-bg-dark/80 backdrop-blur-sm flex flex-col justify-center items-center text-center p-6">
-                  <div className="w-16 h-16 rounded-full bg-primary/20 flex items-center justify-center mb-4 text-primary">
-                    <span className="material-icons text-3xl">eco</span>
-                  </div>
-                  <h3 className="text-xl font-bold text-neutral-dark dark:text-white mb-2">
-                    {t('home.trySomethingNew')}
-                  </h3>
-                  <p className="text-sm text-neutral-mid mb-6">
-                    {t('home.exploreDesc')}
-                  </p>
-                  <button
-                    onClick={() => navigate('/teas')}
-                    className="bg-neutral-dark dark:bg-white text-white dark:text-bg-dark px-6 py-2 rounded-lg font-bold text-sm"
-                  >
-                    {t('home.exploreCollection')}
-                  </button>
-                </div>
-              </motion.div>
+            <h2 className="text-lg font-bold text-neutral-dark dark:text-white mb-3">
+              {t('home.dailyQuote')}
+            </h2>
+            <div className="bg-primary/5 dark:bg-primary/10 rounded-2xl p-5 relative overflow-hidden">
+              <span className="material-icons text-primary/20 text-5xl absolute -top-1 -left-1 select-none">
+                format_quote
+              </span>
+              <p className="text-sm leading-relaxed text-neutral-dark dark:text-gray-200 relative z-10 pl-4">
+                {quote.text}
+              </p>
+              <span className="inline-block mt-3 ml-4 text-xs font-medium text-primary/70 bg-primary/10 px-2.5 py-0.5 rounded-full">
+                {quote.theme_ko}
+              </span>
             </div>
           </motion.section>
         )}
+
+        {/* Brew CTA */}
+        <motion.section
+          className="px-6 mt-6"
+          initial={{ opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4, delay: 0.2 }}
+        >
+          <div className="bg-white dark:bg-neutral-dark/20 rounded-2xl p-5 border border-neutral-light/50 dark:border-neutral-dark/30 flex items-center gap-4">
+            <div className="w-12 h-12 rounded-full bg-primary/15 flex items-center justify-center shrink-0">
+              <span className="material-icons text-primary text-2xl">emoji_food_beverage</span>
+            </div>
+            <div className="flex-1 min-w-0">
+              <p className="text-sm text-neutral-mid dark:text-gray-400">
+                {t('home.brewCta')}
+              </p>
+            </div>
+            <button
+              onClick={() => navigate('/brew/new')}
+              className="bg-primary text-white px-4 py-2 rounded-lg font-bold text-sm shrink-0 hover:bg-primary-dark transition-colors"
+            >
+              {t('home.startBrew')}
+            </button>
+          </div>
+        </motion.section>
 
         {logs.length === 0 && (
           <div className="px-6 mt-8">
             <EmptyState
               icon="local_cafe"
               message={t('home.noBrewLogs')}
-              actionLabel={t('home.brewNow')}
-              onAction={() => navigate('/brew/new')}
             />
           </div>
         )}
 
         {/* Stats */}
         <motion.section
-          className="px-6 mt-2 mb-8"
+          className="px-6 mt-6 mb-8"
           variants={staggerContainer}
           initial="initial"
           animate="animate"
@@ -174,16 +183,24 @@ export default function HomePage() {
         {weekLogs.length > 0 && (
           <motion.section
             className="px-6 pb-6"
-            variants={staggerContainer}
-            initial="initial"
-            animate="animate"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.3 }}
           >
-            <h2 className="text-lg font-bold text-neutral-dark dark:text-white mb-4">{t('home.thisWeek')}</h2>
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-lg font-bold text-neutral-dark dark:text-white">{t('home.thisWeek')}</h2>
+              <button
+                onClick={() => navigate('/brew')}
+                className="text-sm font-semibold text-primary hover:text-primary-dark transition-colors"
+              >
+                {t('home.viewAll')}
+              </button>
+            </div>
             <div className="space-y-3">
               {weekLogs.slice(0, 5).map((log) => (
-                <motion.div key={log.documentId} variants={staggerItem}>
+                <div key={log.documentId}>
                   <BrewLogListItem log={log} />
-                </motion.div>
+                </div>
               ))}
             </div>
           </motion.section>

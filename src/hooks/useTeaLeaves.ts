@@ -2,9 +2,11 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { apiFetch } from '@/lib/api-client';
 import type { TeaLeaf, TeaLeafFormData } from '@/types';
 
+const KEY = ['tea-leaves'] as const;
+
 export function useTeaLeaves() {
   return useQuery({
-    queryKey: ['tea-leaves'],
+    queryKey: KEY,
     queryFn: () => apiFetch<{ data: TeaLeaf[] }>('/tea-leaves').then((r) => r.data),
   });
 }
@@ -28,7 +30,19 @@ export function useCreateTeaLeaf() {
         method: 'POST',
         body: JSON.stringify({ data }),
       }),
-    onSuccess: () => qc.invalidateQueries({ queryKey: ['tea-leaves'] }),
+    onMutate: async (newData) => {
+      await qc.cancelQueries({ queryKey: KEY });
+      const previous = qc.getQueryData<TeaLeaf[]>(KEY);
+      qc.setQueryData<TeaLeaf[]>(KEY, (old) => [
+        ...(old ?? []),
+        { ...newData, id: Date.now(), documentId: `temp-${Date.now()}`, createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() } as TeaLeaf,
+      ]);
+      return { previous };
+    },
+    onError: (_err, _vars, context) => {
+      if (context?.previous) qc.setQueryData(KEY, context.previous);
+    },
+    onSettled: async () => { await qc.invalidateQueries({ queryKey: KEY }); },
   });
 }
 
@@ -40,7 +54,20 @@ export function useUpdateTeaLeaf() {
         method: 'PUT',
         body: JSON.stringify({ data }),
       }),
-    onSuccess: () => qc.invalidateQueries({ queryKey: ['tea-leaves'] }),
+    onMutate: async ({ documentId, data }) => {
+      await qc.cancelQueries({ queryKey: KEY });
+      const previous = qc.getQueryData<TeaLeaf[]>(KEY);
+      qc.setQueryData<TeaLeaf[]>(KEY, (old) =>
+        old?.map((item) =>
+          item.documentId === documentId ? { ...item, ...data, updatedAt: new Date().toISOString() } : item,
+        ),
+      );
+      return { previous };
+    },
+    onError: (_err, _vars, context) => {
+      if (context?.previous) qc.setQueryData(KEY, context.previous);
+    },
+    onSettled: async () => { await qc.invalidateQueries({ queryKey: KEY }); },
   });
 }
 
@@ -49,6 +76,17 @@ export function useDeleteTeaLeaf() {
   return useMutation({
     mutationFn: (documentId: string) =>
       apiFetch(`/tea-leaves/${documentId}`, { method: 'DELETE' }),
-    onSuccess: () => qc.invalidateQueries({ queryKey: ['tea-leaves'] }),
+    onMutate: async (documentId) => {
+      await qc.cancelQueries({ queryKey: KEY });
+      const previous = qc.getQueryData<TeaLeaf[]>(KEY);
+      qc.setQueryData<TeaLeaf[]>(KEY, (old) =>
+        old?.filter((item) => item.documentId !== documentId),
+      );
+      return { previous };
+    },
+    onError: (_err, _vars, context) => {
+      if (context?.previous) qc.setQueryData(KEY, context.previous);
+    },
+    onSettled: async () => { await qc.invalidateQueries({ queryKey: KEY }); },
   });
 }

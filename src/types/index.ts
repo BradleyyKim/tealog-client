@@ -19,6 +19,7 @@ export interface AuthUser {
   id: number;
   username: string;
   email: string;
+  displayName?: string;
 }
 
 export interface LoginResponse {
@@ -27,14 +28,7 @@ export interface LoginResponse {
 }
 
 // ── TeaLeaf ──
-export type TeaCategory =
-  | 'Green'
-  | 'White'
-  | 'Oolong'
-  | 'Black'
-  | 'Sheng_Puerh'
-  | 'Shou_Puerh'
-  | 'Herbal';
+export type TeaCategory = string;
 
 export interface TeaLeaf {
   id: number;
@@ -60,7 +54,7 @@ export interface TeaLeafFormData {
 }
 
 // ── Teaware ──
-export type TeawareType = 'Gaiwan' | 'Yixing_Pot' | 'Glass_Pot' | 'Pitcher' | 'Cup';
+export type TeawareType = string;
 export type TeawareStatus = 'Active' | 'Broken' | 'Sold';
 
 export interface Teaware {

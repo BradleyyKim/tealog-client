@@ -25,6 +25,7 @@ export default function BrewLogFormPage() {
   const updateMutation = useUpdateBrewLog();
 
   const [photoIds, setPhotoIds] = useState<number[]>([]);
+  const [isUploading, setIsUploading] = useState(false);
   const [selectedTea, setSelectedTea] = useState<string>('');
   const [selectedTeawares, setSelectedTeawares] = useState<string[]>([]);
 
@@ -99,6 +100,7 @@ export default function BrewLogFormPage() {
         <ImageUpload
           currentUrl={existing?.photos?.[0]?.url}
           onUploaded={(id) => setPhotoIds((prev) => [...prev, id])}
+          onPendingChange={setIsUploading}
         />
 
         {/* Tea Selector */}
@@ -198,10 +200,10 @@ export default function BrewLogFormPage() {
 
         <button
           type="submit"
-          disabled={isSubmitting}
+          disabled={isSubmitting || isUploading}
           className="w-full bg-primary text-white font-bold py-3 rounded-xl shadow-lg shadow-primary/20 hover:bg-primary-dark transition-colors disabled:opacity-50"
         >
-          {isSubmitting ? t('common.saving') : isEdit ? t('brewForm.update') : t('brewForm.save')}
+          {isUploading ? t('component.uploading') : isSubmitting ? t('common.saving') : isEdit ? t('brewForm.update') : t('brewForm.save')}
         </button>
       </form>
     </div>
