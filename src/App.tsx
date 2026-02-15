@@ -11,6 +11,7 @@ import BrewLogFormPage from '@/pages/BrewLogFormPage';
 import BrewLogDetailPage from '@/pages/BrewLogDetailPage';
 import BrewLogListPage from '@/pages/BrewLogListPage';
 import ProfilePage from '@/pages/ProfilePage';
+import LetterPage from '@/pages/LetterPage';
 
 export default function App() {
   return (
@@ -29,6 +30,7 @@ export default function App() {
           <Route path="/teas/:id/edit" element={<TeaFormPage />} />
           <Route path="/teaware/new" element={<TeawareFormPage />} />
           <Route path="/teaware/:id/edit" element={<TeawareFormPage />} />
+          <Route path="/letter" element={<LetterPage />} />
           <Route path="/brew/new" element={<BrewLogFormPage />} />
           <Route path="/brew/:id" element={<BrewLogDetailPage />} />
           <Route path="/brew/:id/edit" element={<BrewLogFormPage />} />

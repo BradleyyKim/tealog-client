@@ -1,16 +1,16 @@
 import { useAuth } from '@/contexts/AuthContext';
 import { useI18n } from '@/contexts/I18nContext';
-
 import { useBrewLogs } from '@/hooks/useBrewLogs';
 import { useTeaLeaves } from '@/hooks/useTeaLeaves';
 import { useTeawares } from '@/hooks/useTeaware';
+import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { pageTransition, pageTransitionProps, staggerContainer, staggerItem } from '@/lib/animations';
 
 export default function ProfilePage() {
   const { user, logout } = useAuth();
   const { t, locale, setLocale } = useI18n();
-
+  const navigate = useNavigate();
   const { data: brewLogs } = useBrewLogs();
   const { data: teas } = useTeaLeaves();
   const { data: teawares } = useTeawares();
@@ -107,6 +107,18 @@ export default function ProfilePage() {
             </button>
           </div>
         </motion.div>
+
+        {/* Letter (chacha_chan only) */}
+        {user?.username === 'chacha_chan' && (
+          <motion.button
+            variants={staggerItem}
+            onClick={() => navigate('/letter')}
+            className="w-full bg-rose-50 rounded-xl border border-rose-200 p-4 flex items-center gap-3 text-rose-500 hover:bg-rose-100 transition-colors"
+          >
+            <span className="material-icons-outlined">favorite</span>
+            <span className="text-sm font-medium">너의 찻자리가 더 따뜻해지기를 바라며</span>
+          </motion.button>
+        )}
 
         {/* Sign Out */}
         <motion.button
