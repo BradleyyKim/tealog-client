@@ -14,6 +14,9 @@ const LOADING_QUOTES = [
   '지금, 당신 곁의 온기.',
   '생각의 쉼표, 차 한 잔.',
   '오늘의 차, 내일의 힘.',
+  '차차 나아질거예요.',
+  '사랑하는 찬미의 삶을 응원합니다.',
+  '당신의 삶을 함께 음미하겠습니다.'
 ];
 
 export default function LoadingSpinner() {
