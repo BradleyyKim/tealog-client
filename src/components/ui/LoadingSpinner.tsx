@@ -20,7 +20,7 @@ export default function LoadingSpinner() {
   const [quote] = useState(() => LOADING_QUOTES[Math.floor(Math.random() * LOADING_QUOTES.length)]);
 
   return (
-    <div className="flex flex-col items-center justify-center py-20 px-8 gap-6">
+    <div className="flex flex-col items-center justify-center min-h-[60vh] px-8 gap-6">
       <div className="w-8 h-8 border-3 border-primary/30 border-t-primary rounded-full animate-spin" />
       <AnimatePresence>
         <motion.p
