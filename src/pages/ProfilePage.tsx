@@ -1,6 +1,6 @@
 import { useAuth } from '@/contexts/AuthContext';
 import { useI18n } from '@/contexts/I18nContext';
-import { useDarkMode } from '@/hooks/useDarkMode';
+
 import { useBrewLogs } from '@/hooks/useBrewLogs';
 import { useTeaLeaves } from '@/hooks/useTeaLeaves';
 import { useTeawares } from '@/hooks/useTeaware';
@@ -10,7 +10,7 @@ import { pageTransition, pageTransitionProps, staggerContainer, staggerItem } fr
 export default function ProfilePage() {
   const { user, logout } = useAuth();
   const { t, locale, setLocale } = useI18n();
-  const { isDark, toggle } = useDarkMode();
+
   const { data: brewLogs } = useBrewLogs();
   const { data: teas } = useTeaLeaves();
   const { data: teawares } = useTeawares();
@@ -78,26 +78,6 @@ export default function ProfilePage() {
         initial="initial"
         animate="animate"
       >
-        {/* Dark Mode */}
-        <motion.div variants={staggerItem} className="bg-white dark:bg-neutral-dark/40 rounded-xl border border-neutral-light dark:border-neutral-dark/50 p-4 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <span className="material-icons-outlined text-text-muted">dark_mode</span>
-            <span className="text-sm font-medium text-neutral-dark dark:text-white">{t('profile.darkMode')}</span>
-          </div>
-          <button
-            onClick={toggle}
-            className={`relative w-12 h-7 rounded-full transition-colors ${
-              isDark ? 'bg-primary' : 'bg-neutral-light'
-            }`}
-          >
-            <div
-              className={`absolute top-1 w-5 h-5 rounded-full bg-white shadow transition-transform ${
-                isDark ? 'translate-x-6' : 'translate-x-1'
-              }`}
-            />
-          </button>
-        </motion.div>
-
         {/* Language */}
         <motion.div variants={staggerItem} className="bg-white dark:bg-neutral-dark/40 rounded-xl border border-neutral-light dark:border-neutral-dark/50 p-4 flex items-center justify-between">
           <div className="flex items-center gap-3">
